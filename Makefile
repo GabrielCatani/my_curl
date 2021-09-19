@@ -9,7 +9,7 @@ SRC_PATH=./src/
 UTILS_PATH=./utils/
 OBJS_SRC_PATH=./src_obj/
 OBJS_UTILS_PATH=./utils_obj/
-TARGET=my_zsh
+TARGET=my_curl
 
 SRC := $(wildcard $(SRC_PATH)*.c)
 UTILS := $(wildcard $(UTILS_PATH)*.c)
