@@ -102,7 +102,7 @@ my_curl is a program that emulates the curl tool - that is responsible to transf
   what data we are asking for, and how to send that data for us, we must follow certain rules. Does rules are determined by the protocol
   used by the server. In my_curl, we be using http.
 
-  To send a "http message"(request) we must create a HTTP header, that will be send to the server. This header, has some information
+  To send an "http message"(request) we must create an HTTP header, that will be send to the server. This header, has some information
   about the server that can be overdetailed or simple, depending on the user necessity and server configuration. One simple http header
   example:
     ```
@@ -110,6 +110,7 @@ my_curl is a program that emulates the curl tool - that is responsible to transf
     Host: www.columbia.edu
 
     ```
+    
     **HTTP components**
     ```
     [Method] [Resource] [HTTP version]
@@ -120,4 +121,24 @@ my_curl is a program that emulates the curl tool - that is responsible to transf
     ```
 
   ### 5. Making a Request, receiving a Response.
-  //TODO
+
+  After creating a socket, binding it to a port, making the connection to the server, and creating an HTTP Header, now it's just a matter of
+  sending the http header to the server. Thats just a matter of writing the header to the file descriptor, created by the socket function.
+
+  **Http Request**
+  ```
+  int sockfd = socket();
+  char *http_header = "
+    GET / HTTP/1.1
+    Host: www.columbia.edu
+    \r\n";
+
+  write(sockfd, http_header, strlen(http_header));
+  ```
+
+  After that, it's just a matter of reading from the same file descriptor, to get access to the data sent by the server, responding to
+  the request made.
+
+  As the request, the response also comes with an http header, with information like if the request was successeful, the size of the response
+  the type of data, etc. So before reading and outputting the data directly to stdout, it's important to Parse and extract info. from the
+  response header.
