@@ -25,7 +25,7 @@ my_curl is a program that emulates the curl tool - that is responsible to transf
 
 ## Program Overview and Components ##
 
-  ### 1. Parse URL passed by the user
+  ### 1. Parse URL passed by the user ###
     Given the URL passed to my_curl, we must first identify if it's a valid format:
   ```
   http://www.columbia.edu/~fdc/sample.html
@@ -33,14 +33,14 @@ my_curl is a program that emulates the curl tool - that is responsible to transf
      http://    www.columbia        .edu             /~fdc/sample.html
   | Protocol | |  Domain    | | Top Level Domain |  |     Resource    |
   ```
-  For my_curl,
-   **Protocol**: http:// (can be omitted);
-   **Domain**: name of the server on the internet, can have multiple parts, separated by '.';
-   **Top Level Domain(TLD)**: can be .com, .net, .org, etc.
-   **Resource**: name of the resource (file, HTML page, JSON etc.). Can be ommited, which will normally point ou to home/index.html
-     deppending on the server hosting the URL.
+  For my_curl:
+  
+  * **Protocol**: http:// (can be omitted)
+  * **Domain**: name of the server on the internet, can have multiple parts, separated by '.'
+  * **Top Level Domain(TLD)**: can be .com, .net, .org, etc.
+  *  **Resource**: name of the resource (file, HTML page, JSON etc.). Can be ommited, which will normally point ou to home/index.html deppending on the server hosting the URL.
 
-  ### 2. DNS Lookup
+  ### 2. DNS Lookup ###
     With a valid URL, we procced to check if that Domain exists on the internet, and fetch it's IP - we need the IP, in order
   to build a socket, bind to a host port and make a connection with the server in the next steps. For that, we will be using:
   ```
@@ -57,7 +57,7 @@ my_curl is a program that emulates the curl tool - that is responsible to transf
    };
   ```
 
-  ### 3. Set up connection elements
+  ### 3. Set up connection elements ###
     In order to make a proper connection, we must first create a socket - which is basically a file descriptor, that is
   used to send and receive data from a connection. With a valid socket created, we bind it to a port on the host machine,
   and finally create a connection.
@@ -93,7 +93,7 @@ my_curl is a program that emulates the curl tool - that is responsible to transf
          socklen_t address_len);
  ```
 
-  ### 4. Prelude to a request
+  ### 4. Prelude to a request ###
       With steps 3, we can immeditely start sending and receiving data to the server. But, in order for the server know exactly
     what data we are asking for, and how to send that data for us, we must follow certain rules. Does rules are determined by the protocol
     used by the server. In my_curl, we be using http.
@@ -115,5 +115,5 @@ my_curl is a program that emulates the curl tool - that is responsible to transf
     \r\n
     ```
 
-  ### 5. Making a Request, receiving a Response.
+  ### 5. Making a Request, receiving a Response. ###
   //TODO
