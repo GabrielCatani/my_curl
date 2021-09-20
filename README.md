@@ -98,13 +98,13 @@ my_curl is a program that emulates the curl tool - that is responsible to transf
 
   ### 4. Prelude to a request
   
-    With steps 3, we can immeditely start sending and receiving data to the server. But, in order for the server know exactly
-    what data we are asking for, and how to send that data for us, we must follow certain rules. Does rules are determined by the protocol
-    used by the server. In my_curl, we be using http.
+  With steps 3, we can immeditely start sending and receiving data to the server. But, in order for the server know exactly
+  what data we are asking for, and how to send that data for us, we must follow certain rules. Does rules are determined by the protocol
+  used by the server. In my_curl, we be using http.
 
-      To send a "http message"(request) we must create a HTTP header, that will be send to the server. This header, has some information
-    about the server that can be overdetailed or simple, depending on the user necessity and server configuration. One simple http header
-    example:
+  To send a "http message"(request) we must create a HTTP header, that will be send to the server. This header, has some information
+  about the server that can be overdetailed or simple, depending on the user necessity and server configuration. One simple http header
+  example:
     ```
     GET / HTTP/1.1 
     Host: www.columbia.edu
