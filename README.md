@@ -105,6 +105,7 @@ my_curl is a program that emulates the curl tool - that is responsible to transf
   To send an "http message"(request) we must create an HTTP header, that will be send to the server. This header, has some information
   about the server that can be overdetailed or simple, depending on the user necessity and server configuration. One simple http header
   example:
+  
     ```
     GET / HTTP/1.1 
     Host: www.columbia.edu
