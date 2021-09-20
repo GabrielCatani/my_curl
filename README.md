@@ -43,7 +43,7 @@ my_curl is a program that emulates the curl tool - that is responsible to transf
 
   ### 2. DNS Lookup
   
-    With a valid URL, we procced to check if that Domain exists on the internet, and fetch it's IP - we need the IP, in order
+  With a valid URL, we procced to check if that Domain exists on the internet, and fetch it's IP - we need the IP, in order
   to build a socket, bind to a host port and make a connection with the server in the next steps. For that, we will be using:
   ```
   // For getting domain info.
@@ -61,7 +61,7 @@ my_curl is a program that emulates the curl tool - that is responsible to transf
 
   ### 3. Set up connection elements
   
-    In order to make a proper connection, we must first create a socket - which is basically a file descriptor, that is
+  In order to make a proper connection, we must first create a socket - which is basically a file descriptor, that is
   used to send and receive data from a connection. With a valid socket created, we bind it to a port on the host machine,
   and finally create a connection.
 
@@ -98,7 +98,7 @@ my_curl is a program that emulates the curl tool - that is responsible to transf
 
   ### 4. Prelude to a request
   
-      With steps 3, we can immeditely start sending and receiving data to the server. But, in order for the server know exactly
+    With steps 3, we can immeditely start sending and receiving data to the server. But, in order for the server know exactly
     what data we are asking for, and how to send that data for us, we must follow certain rules. Does rules are determined by the protocol
     used by the server. In my_curl, we be using http.
 
