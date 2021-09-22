@@ -10,5 +10,8 @@
 #include <unistd.h>
 #include "my_string.h"
 //Connection
-int open_connection(char *domain);
+int open_connection(struct sockaddr_in *socket_info);
+void close_connection(struct sockaddr_in *socket_info, int sockfd);
+struct hostent *get_host_info(char *domain);
+struct sockaddr_in *set_socket(struct hostent *host_info);
 #endif

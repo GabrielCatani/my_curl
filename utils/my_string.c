@@ -1,11 +1,8 @@
 #include "my_string.h"
 
 void my_memset(char *dst, char value, int len) {
-  dst = (char *)malloc(sizeof(char) * len);
-  if (dst) {
-    for (int i = 0; i < len; i++) {
-      dst[i] = value;
-    }
+  for (int i = 0; i < len; i++) {
+    dst[i] = value;
   }
 }
 

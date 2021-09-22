@@ -1,7 +1,7 @@
 CC=gcc
 DEBUG= -g3 -fsanitize=address
 #CC=clang
-#DEBUG=-g3 -fsanitize=address
+#DEBUG=-g3 -fsanitize=leak
 FLAGS=-Wall -Wextra -Werror
 INCLUDES= -I includes/
 
