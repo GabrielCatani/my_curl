@@ -1,8 +1,10 @@
 #include "my_curl.h"
 
-int main(void) {
+//$> my_curl "www.whatever.com"
+int main(int argc, char *argv[])
+{
 
-  //Test open_connection
+    //Test open_connection
   struct sockaddr_in *socket_info = NULL;
   char **header_info = NULL;
   int sockfd = 0;
@@ -10,9 +12,10 @@ int main(void) {
   socket_info = set_socket(get_host_info("www.example.com"));
 
   sockfd = open_connection(socket_info);
-  if (sockfd > 2) {
+  if (sockfd > 2)
+  {
     request(sockfd, http_header);
-    header_info =  get_response_header(sockfd);
+    header_info = get_response_header(sockfd);
     printf("HTTP Response: %s.  %s\n", header_info[0], header_info[1]);
     free(header_info[0]);
     free(header_info[1]);
@@ -25,7 +28,7 @@ int main(void) {
 
   sockfd = open_connection(socket_info);
 
-  close_connection(socket_info, sockfd);  
+  close_connection(socket_info, sockfd);
 
   return 0;
 }
