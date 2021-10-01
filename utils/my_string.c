@@ -147,7 +147,6 @@ int my_strncmp(char *s1, char *s2, int len)
   return (*s1 - *s2);
 }
 
-<<<<<<< HEAD
 char *get_key(char *str, char sep) {
   if (!str) {
     return NULL;
@@ -177,11 +176,10 @@ char *get_value(char *str, char sep) {
   strip = my_strsub(str, index + 2, len);
   return strip;
 }
-=======
+
 int my_isalpha(int c)
 {
   if ((c >= 'A' && 'Z' >= c) || (c >= 'a' && 'z' >= c))
     return (1);
   return (0);
 }
->>>>>>> a9418c87caa2647b4c8073fb18a6fab0b8ad9d5d
