@@ -2,6 +2,7 @@
 #define __HTTP_COM_H__
 typedef struct http_response http_response;
 struct http_response {
+  int len;
   char **headers;
   char **values;  
 };
@@ -16,5 +17,7 @@ void print_http_buffer(http_buffer *head);
 http_response *get_http_response(int sockfd);
 http_response *struct_http_response(http_buffer *http_buf, int nbr_lines);
 void request(int sockfd, char *http_header);
+void destroy_http_buffer(http_buffer **head);
+void destroy_http_response(http_response **head);
 #define BUFFER_SIZE 512
 #endif

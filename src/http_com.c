@@ -13,10 +13,6 @@ http_response *get_http_response(int sockfd) {
   http_response *http_res;
   http_buffer *http_buf = NULL;
   
-  http_res = (http_response *)malloc(sizeof(http_response));
-  if (!http_res) {
-    return NULL;
-  }
 
   int nbr_lines = 0;
   while ((line = my_readline(sockfd))) {
@@ -28,8 +24,10 @@ http_response *get_http_response(int sockfd) {
     free(line);
     nbr_lines++;
   }
+  free(line);
 
-  struct_http_response(http_buf, nbr_lines);
+  http_res = struct_http_response(http_buf, nbr_lines);
+  destroy_http_buffer(&http_buf);
   return http_res;
 }
 
@@ -94,6 +92,29 @@ http_response *struct_http_response(http_buffer *http_buf, int nbr_lines) {
     http_res->values[index] = get_value(http_buf->value, ':');
     http_buf = http_buf->next;
   }
+  http_res->len = index;
   
   return http_res;
+}
+
+void destroy_http_buffer(http_buffer **head) {
+
+  http_buffer *previous = *head;
+
+  while (*head) {
+    *head = (*head)->next;
+    free(previous->value);
+    free(previous);
+    previous = (*head);
+  }
+}
+
+void destroy_http_response(http_response **head) {
+  for(int i = 0; i <= (*head)->len; i++) {
+    free((*head)->headers[i]);
+    free((*head)->values[i]);
+  }
+  free((*head)->headers);
+  free((*head)->values);
+  free((*head));
 }

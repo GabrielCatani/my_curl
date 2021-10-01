@@ -1,7 +1,7 @@
 #include "my_curl.h"
 
 //$> my_curl "www.whatever.com"
-int main(int argc, char *argv[])
+int main(void)
 {
 
     //Test open_connection
@@ -16,7 +16,9 @@ int main(int argc, char *argv[])
   {
     request(sockfd, http_header);
     http_res = get_http_response(sockfd);
-    printf("%s\n", http_res->headers[1]);
+    printf("%s => %s\n", http_res->headers[0], http_res->values[0]);
+    destroy_http_response(&http_res);
+    free(http_res);
   }
   close_connection(socket_info, sockfd);
 
