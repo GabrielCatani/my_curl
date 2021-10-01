@@ -19,4 +19,5 @@ int my_strcmp(char *s1, char *s2);
 int my_strncmp(char *s1, char *s2, int len);
 char *get_key(char *str, char sep);
 char *get_value(char *str, char sep);
+int my_isalpha(int c);
 #endif
