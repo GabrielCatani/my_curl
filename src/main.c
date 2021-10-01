@@ -4,7 +4,7 @@
 int main(void)
 {
 
-    //Test open_connection
+  //Test open_connection
   struct sockaddr_in *socket_info = NULL;
   http_response *http_res = NULL;
   int sockfd = 0;
@@ -16,9 +16,8 @@ int main(void)
   {
     request(sockfd, http_header);
     http_res = get_http_response(sockfd);
-    printf("%s => %s\n", http_res->headers[0], http_res->values[0]);
+    get_response_and_show(sockfd, http_res);
     destroy_http_response(&http_res);
-    free(http_res);
   }
   close_connection(socket_info, sockfd);
 

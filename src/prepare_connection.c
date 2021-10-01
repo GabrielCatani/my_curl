@@ -36,7 +36,7 @@ struct sockaddr_in *set_socket(struct hostent *host_info) {
 int open_connection(struct sockaddr_in *socket_info) {
   int sockfd = 0;
   struct sockaddr_in socket_info_ptr;
-
+  
   if (!socket_info) {
     return -1;
   }
@@ -45,18 +45,7 @@ int open_connection(struct sockaddr_in *socket_info) {
   //Create socket
   sockfd = socket(PF_INET, SOCK_STREAM, 0);
   
-  /*
-  //Create Bind to default port 80
-  if (bind(sockfd,
-	   (struct sockaddr *)&socket_info,
-	   sizeof(struct sockaddr_in)) == -1) {
-    my_putstr("Bind failed", 1);
-    close(sockfd);
-    return -1;
-  }
-  */
   //Create connection
-
   if (connect(sockfd,
 	   (struct sockaddr *)&socket_info_ptr,
 	      sizeof(socket_info_ptr)) == -1) {

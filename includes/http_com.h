@@ -19,5 +19,7 @@ http_response *struct_http_response(http_buffer *http_buf, int nbr_lines);
 void request(int sockfd, char *http_header);
 void destroy_http_buffer(http_buffer **head);
 void destroy_http_response(http_response **head);
+void get_response_and_show(int sockfd, http_response *http_res);
+char *get_header_value(http_response *http_res, char *header);
 #define BUFFER_SIZE 512
 #endif
