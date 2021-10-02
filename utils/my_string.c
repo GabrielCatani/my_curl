@@ -1,4 +1,5 @@
 #include "my_string.h"
+#include <stdio.h>
 
 void my_memset(char *dst, char value, int len)
 {
@@ -86,13 +87,13 @@ char *my_strsub(char *str, int start, int len)
   if (!ptr || !str)
     return NULL;
 
-  str = str + start;
-  i = 0;
-  while (i < len)
-  {
-    ptr[i] = str[i];
-    i++;
-  }
+    str = str + start;
+    i = 0;
+    while (i < (len - start))
+    {
+        ptr[i] = str[i];
+        i++;
+    }
 
   ptr[i] = '\0';
   return ptr;
@@ -144,6 +145,36 @@ int my_strncmp(char *s1, char *s2, int len)
   }
 
   return (*s1 - *s2);
+}
+
+char *get_key(char *str, char sep) {
+  if (!str) {
+    return NULL;
+  }
+
+  char *strip = NULL;
+  int index = 0;
+  while (str[index] != '\0' && str[index] != sep) {
+    index++;
+  }
+  strip = my_strsub(str, 0, index);
+  return strip;
+}
+
+char *get_value(char *str, char sep) {
+  if (!str) {
+    return NULL;
+  }
+
+  char *strip = NULL;
+  int len = my_strlen(str);
+  int index = 0;
+  while (str[index] != '\0' && str[index] != sep) {
+    index++;
+  }
+
+  strip = my_strsub(str, index + 2, len);
+  return strip;
 }
 
 int my_isalpha(int c)
