@@ -2,7 +2,7 @@
 #define lexer_parser_H
 typedef struct parsed_url
 {
-    char *scheme;   /* mandatory */
+    char *protocol; /* mandatory */
     char *host;     /* mandatory */
     char *port;     /* optional */
     char *path;     /* optional */
@@ -12,7 +12,9 @@ typedef struct parsed_url
     char *password; /* optional */
 } parsed_url;
 
-parsed_url *parse_url(const char *);
-void parsed_url_free(struct parsed_url *);
+parsed_url *parse_url(char *url);
+parsed_url *purl_initializer(void);
+int is_protocol_char(int c);
+void http_parsed_url_free(parsed_url *purl);
 
 #endif
