@@ -19,5 +19,6 @@ parsed_url *purl_initializer(void);
 int is_protocol_char(int c);
 void http_parsed_url_free(parsed_url *purl);
 void protocol_checker(char *tmpstr, parsed_url *purl, char *url);
+int restriction_url_checker(char *curstr);
 
 #endif

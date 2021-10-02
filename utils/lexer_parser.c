@@ -59,49 +59,40 @@ void protocol_checker(char *tmpstr, parsed_url *purl, char *url)
         purl->protocol = my_strdup("HTTP");
 }
 
-parsed_url *parse_url(char *url)
+/* Check restrictions */
+int restriction_url_checker(char *curstr)
 {
-    parsed_url *purl = purl_initializer();
-    char *curstr = my_strdup(url);
-    char *tmpstr = my_strtok(curstr, ':');
-    int len = my_strlen(curstr) - my_strlen(tmpstr);
-    int userpass_flag;
-    int bracket_flag;
-    //printf("\n curstr == %s , tmpstr== %s!!!!!\n", curstr, tmpstr);
-    //printf("\n !!!!!! len == %d !!!!!\n", len);
-    protocol_checker(tmpstr, purl, url);
-    if (purl->protocol == NULL)
-        return NULL;
+    if (curstr[0] == ':')
+        curstr++;
 
-    printf("%s\n", purl->protocol);
-
-    /* Check restrictions */
-    for (int i = 0; i < len; i++)
+    for (int i = 0; curstr[i] != '\0'; i++)
     {
         if (!is_protocol_char(curstr[i]))
-        {
-            /* Invalid format */
-            http_parsed_url_free(purl);
-            return NULL;
-        }
+            return 0;
     }
-    /* Copy the protocol to the storage */
-    purl->protocol = malloc(sizeof(char) * (len + 1));
-    if (NULL == purl->protocol)
+    return 1;
+}
+
+//Main Parsing function
+parsed_url *parse_url(char *url)
+{
+    int bracket_flag;
+    int userpass_flag;
+    char *curstr = my_strchr(url, ':');
+    char *tmpstr = my_strtok(url, ':');
+    parsed_url *purl = purl_initializer();
+    int len = my_strlen(curstr) - my_strlen(tmpstr);
+    int check = restriction_url_checker(curstr);
+
+    //printf("\n !!!!!! len == %d !!!!!\n", len);
+    //printf("\n curstr == %s , tmpstr== %s!!!!!\n", curstr, tmpstr);
+
+    protocol_checker(tmpstr, purl, curstr);
+    if (purl->protocol == NULL || check == 0)
     {
         http_parsed_url_free(purl);
         return NULL;
     }
-    (void)my_strncpy(purl->protocol, curstr, len);
-    purl->protocol[len] = '\0';
-    /* Make the character to lower if it is upper case. */
-    for (int i = 0; i < len; i++)
-    {
-        purl->protocol[i] = my_tolower(purl->protocol[i]);
-    }
-    /* Skip ':' */
-    tmpstr++;
-    curstr = tmpstr;
 
     /*
      * //<user>:<password>@<host>:<port>/<url-path>
