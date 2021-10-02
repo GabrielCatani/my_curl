@@ -20,4 +20,8 @@ int my_strncmp(char *s1, char *s2, int len);
 char *get_key(char *str, char sep);
 char *get_value(char *str, char sep);
 int my_isalpha(int c);
+int my_tolower(int c);
+char *my_strncpy(char *dst, char *src, int n);
+char *my_strtok(char *str, char delim);
+
 #endif

@@ -10,6 +10,7 @@
 #include <unistd.h>
 #include "my_string.h"
 #include "http_com.h"
+#include "lexer_parser.h"
 //Connection
 int open_connection(struct sockaddr_in *socket_info);
 void close_connection(struct sockaddr_in *socket_info, int sockfd);

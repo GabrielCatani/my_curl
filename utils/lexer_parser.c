@@ -9,7 +9,7 @@ int is_protocol_char(int c)
 
 void http_parsed_url_free(parsed_url *purl)
 {
-    if (NULL != purl)
+    if (purl != NULL)
     {
         if (NULL != purl->protocol)
             free(purl->protocol);
@@ -52,31 +52,33 @@ parsed_url *purl_initializer(void)
     return purl;
 }
 
+//default case, we will try HTTP
+void protocol_checker(char *tmpstr, parsed_url *purl, char *url)
+{
+    if (tmpstr == NULL || my_strcmp(url, tmpstr) == 0 || my_strcmp(tmpstr, "HTTP") == 0 || my_strcmp(tmpstr, "http") == 0)
+        purl->protocol = my_strdup("HTTP");
+}
+
 parsed_url *parse_url(char *url)
 {
     parsed_url *purl = purl_initializer();
     char *curstr = my_strdup(url);
-    char *tmpstr = my_strchr(curstr, ':');
-    int len = tmpstr - curstr;
+    char *tmpstr = my_strtok(curstr, ':');
+    int len = my_strlen(curstr) - my_strlen(tmpstr);
     int userpass_flag;
     int bracket_flag;
-
-    //default case, we will try HTTP
-    if (tmpstr == NULL || my_strcmp(tmpstr, "HTTP") == 0 || my_strcmp(tmpstr, "http") == 0)
-    {
-        purl->protocol = my_strdup("HTTP");
-    }
-    //case that protocol is different from HTTP
-    else if (my_strcmp(tmpstr, "HTTP") != 0 || my_strcmp(tmpstr, "http") != 0)
-    {
-        http_parsed_url_free(purl);
+    //printf("\n curstr == %s , tmpstr== %s!!!!!\n", curstr, tmpstr);
+    //printf("\n !!!!!! len == %d !!!!!\n", len);
+    protocol_checker(tmpstr, purl, url);
+    if (purl->protocol == NULL)
         return NULL;
-    }
+
+    printf("%s\n", purl->protocol);
 
     /* Check restrictions */
     for (int i = 0; i < len; i++)
     {
-        if (!_is_protocol_char(curstr[i]))
+        if (!is_protocol_char(curstr[i]))
         {
             /* Invalid format */
             http_parsed_url_free(purl);
@@ -90,12 +92,12 @@ parsed_url *parse_url(char *url)
         http_parsed_url_free(purl);
         return NULL;
     }
-    (void)strncpy(purl->protocol, curstr, len);
+    (void)my_strncpy(purl->protocol, curstr, len);
     purl->protocol[len] = '\0';
     /* Make the character to lower if it is upper case. */
     for (int i = 0; i < len; i++)
     {
-        purl->protocol[i] = tolower(purl->protocol[i]);
+        purl->protocol[i] = my_tolower(purl->protocol[i]);
     }
     /* Skip ':' */
     tmpstr++;
@@ -152,7 +154,7 @@ parsed_url *parse_url(char *url)
             http_parsed_url_free(purl);
             return NULL;
         }
-        (void)strncpy(purl->username, curstr, len);
+        (void)my_strncpy(purl->username, curstr, len);
         purl->username[len] = '\0';
         /* Proceed current pointer */
         curstr = tmpstr;
@@ -173,7 +175,7 @@ parsed_url *parse_url(char *url)
                 http_parsed_url_free(purl);
                 return NULL;
             }
-            (void)strncpy(purl->password, curstr, len);
+            (void)my_strncpy(purl->password, curstr, len);
             purl->password[len] = '\0';
             curstr = tmpstr;
         }
@@ -218,7 +220,7 @@ parsed_url *parse_url(char *url)
         http_parsed_url_free(purl);
         return NULL;
     }
-    (void)strncpy(purl->host, curstr, len);
+    (void)my_strncpy(purl->host, curstr, len);
     purl->host[len] = '\0';
     curstr = tmpstr;
 
@@ -239,7 +241,7 @@ parsed_url *parse_url(char *url)
             http_parsed_url_free(purl);
             return NULL;
         }
-        (void)strncpy(purl->port, curstr, len);
+        (void)my_strncpy(purl->port, curstr, len);
         purl->port[len] = '\0';
         curstr = tmpstr;
     }
@@ -271,7 +273,7 @@ parsed_url *parse_url(char *url)
         http_parsed_url_free(purl);
         return NULL;
     }
-    (void)strncpy(purl->path, curstr, len);
+    (void)my_strncpy(purl->path, curstr, len);
     purl->path[len] = '\0';
     curstr = tmpstr;
 
@@ -293,7 +295,7 @@ parsed_url *parse_url(char *url)
             http_parsed_url_free(purl);
             return NULL;
         }
-        (void)strncpy(purl->query, curstr, len);
+        (void)my_strncpy(purl->query, curstr, len);
         purl->query[len] = '\0';
         curstr = tmpstr;
     }
@@ -316,7 +318,7 @@ parsed_url *parse_url(char *url)
             http_parsed_url_free(purl);
             return NULL;
         }
-        (void)strncpy(purl->fragment, curstr, len);
+        (void)my_strncpy(purl->fragment, curstr, len);
         purl->fragment[len] = '\0';
         curstr = tmpstr;
     }
