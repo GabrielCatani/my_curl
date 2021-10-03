@@ -26,40 +26,52 @@ void content_length_format(int sockfd, http_response *http_res) {
   }
 }
 
-void transfer_encoding_format(int sockfd, http_response *http_res) {
-  char *line = NULL;
-  char *chunk_info = NULL;
-  char *tmp = NULL;
+int get_chunk_size(char *line) {
   int chunk_len = 0;
-  int line_len = 0;
-  printf("%s\n", http_res->values[0]);
-  tmp = my_readline(sockfd);
-  chunk_info = my_strtok(tmp, '\r');
+  char *tmp = NULL;
+  
+  tmp = my_strtok(line, '\r');
+  chunk_len = hex_to_dec(tmp);
   free(tmp);
   
-  if (chunk_info) {
-    chunk_len = hex_to_dec(chunk_info);
-    free(chunk_info);
-  }
+  return chunk_len;
+}
+
+void read_and_print_chunk(int sockfd, int chunk_size) {
+  int chunk_tracker = 0;
+  char *line = NULL;
   
-  while ((line = my_readline(sockfd))) {
-    line_len = my_strlen(line);
+  while (chunk_tracker < chunk_size) {
+    line = my_readline(sockfd);
     my_putstr(line, 1);
-    chunk_len -= line_len + 1;
-    printf("%d\n", chunk_len);    
-    if (line[line_len + 1] == '\r' ||
-	!chunk_len) {
-      tmp = my_readline(sockfd);
-      chunk_info = my_strtok(tmp,'\r');
-      free(tmp);
-      if (!chunk_info) {
-        break;
-      }
-      else {
-       chunk_len = hex_to_dec(chunk_info);
-       free(chunk_info);
-      }
+    chunk_tracker += my_strlen(line) + 1;
+    free(line);
+  }
+}
+
+void transfer_encoding_format(int sockfd, http_response *http_res) {
+  char *line = NULL;
+  char *encoding = NULL;
+  int chunk_size = 0;
+    
+  encoding = get_header_value(http_res, "Transfer-Encoding");
+  if (encoding) {
+    if (my_strncmp(encoding, "chunked",7)) {
+      free(encoding);
+      return;
     }
+    free(encoding);
+  }
+
+  //start, first chunk
+  line = my_readline(sockfd);
+  chunk_size = get_chunk_size(line);
+  free(line);
+  while (chunk_size > 0) {  
+    read_and_print_chunk(sockfd, chunk_size);
+    line = my_readline(sockfd);
+    chunk_size = get_chunk_size(line);
+    free(line);
   }
 }
 
@@ -73,6 +85,7 @@ void get_response_and_show(int sockfd, http_response *http_res) {
   else {
     content_length_format(sockfd, http_res);
   }
+  free(data_length_control);
 }
 
 char *get_header_value(http_response *http_res, char *header) {
