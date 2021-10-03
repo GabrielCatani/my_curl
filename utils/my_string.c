@@ -297,10 +297,11 @@ int hex_letter_value(char hex_digit) {
   char hex_table[] = {'a', 'b', 'c','d','e','f'};
   int index = 0;
   
-  while (index++ < 6) {
+  while (index < 6) {
     if (hex_table[index] == hex_digit) {
       return (10 + index);
     }
+    index++;
   }
   return -1;
 }
