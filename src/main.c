@@ -3,7 +3,8 @@
 //$> my_curl "www.whatever.com"
 int main(void)
 {
-
+  parsed_url *purl = purl_initializer();
+  purl = parse_url("http:www.google.com");
   //Test open_connection
   struct sockaddr_in *socket_info = NULL;
   http_response *http_res = NULL;

@@ -87,13 +87,13 @@ char *my_strsub(char *str, int start, int len)
   if (!ptr || !str)
     return NULL;
 
-    str = str + start;
-    i = 0;
-    while (i < (len - start))
-    {
-        ptr[i] = str[i];
-        i++;
-    }
+  str = str + start;
+  i = 0;
+  while (i < (len - start))
+  {
+    ptr[i] = str[i];
+    i++;
+  }
 
   ptr[i] = '\0';
   return ptr;
@@ -147,29 +147,35 @@ int my_strncmp(char *s1, char *s2, int len)
   return (*s1 - *s2);
 }
 
-char *get_key(char *str, char sep) {
-  if (!str) {
+char *get_key(char *str, char sep)
+{
+  if (!str)
+  {
     return NULL;
   }
 
   char *strip = NULL;
   int index = 0;
-  while (str[index] != '\0' && str[index] != sep) {
+  while (str[index] != '\0' && str[index] != sep)
+  {
     index++;
   }
   strip = my_strsub(str, 0, index);
   return strip;
 }
 
-char *get_value(char *str, char sep) {
-  if (!str) {
+char *get_value(char *str, char sep)
+{
+  if (!str)
+  {
     return NULL;
   }
 
   char *strip = NULL;
   int len = my_strlen(str);
   int index = 0;
-  while (str[index] != '\0' && str[index] != sep) {
+  while (str[index] != '\0' && str[index] != sep)
+  {
     index++;
   }
 
@@ -211,4 +217,55 @@ int my_atoi(char *str)
     }
 
     return result * sign;
+}
+
+int my_tolower(int c)
+{
+  return ((c >= 'A' && c <= 'Z') ? c + 32 : c);
+}
+
+char *my_strncpy(char *dst, char *src, int n)
+{
+  int i;
+
+  i = 0;
+  while (i < n && src[i])
+  {
+    dst[i] = src[i];
+    i += 1;
+  }
+  while (i < n)
+  {
+    dst[i] = '\0';
+    i += 1;
+  }
+  return (dst);
+}
+
+char *my_strtok(char *str, char delim)
+{
+  char *stock = NULL;
+  char *ptr;
+  int flg;
+
+  flg = 0;
+  ptr = NULL;
+  if (str != NULL)
+    stock = my_strdup(str);
+  while (*stock != '\0')
+  {
+    if (flg == 0 && *stock != delim)
+    {
+      flg = 1;
+      ptr = stock;
+    }
+    else if (flg == 1 && *stock == delim)
+    {
+      *stock = '\0';
+      stock += 1;
+      break;
+    }
+    stock += 1;
+  }
+  return (ptr);
 }
