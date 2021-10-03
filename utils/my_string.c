@@ -183,3 +183,32 @@ int my_isalpha(int c)
     return (1);
   return (0);
 }
+
+int my_atoi(char *str)
+{
+    int result = 0;
+    int sign = 1;
+    int index = 0;
+
+    while ((*str >= 9 && *str <= 13) || *str == ' ')
+        ++str;
+
+    if (str[index] == '-')
+        sign = -1;
+
+    while (str[index])
+    {
+        if (str[index] >= '0' && str[index] <= '9')
+        {
+            while (str[index] >= '0' && str[index] <= '9')
+            {
+                result = (10 * result) + str[index] - 48;
+                index++;
+            }
+            break;
+        }
+        index++;
+    }
+
+    return result * sign;
+}

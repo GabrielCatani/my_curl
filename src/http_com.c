@@ -1,7 +1,6 @@
 #include "my_curl.h"
 #include "my_string.h"
 #include "http_com.h"
-#include <string.h>
 
 void request(int sockfd, char *http_header) {
   write(sockfd, http_header, my_strlen(http_header));
@@ -11,23 +10,26 @@ void get_response_and_show(int sockfd, http_response *http_res) {
   char *line = NULL;
   char *body_lenght = NULL;
   body_lenght = get_header_value(http_res, "Content-Length");
-
+  int length = 0;
+  
   if (body_lenght) {
-    int lenght = atoi(body_lenght);
+    length = my_atoi(body_lenght);
     free(body_lenght);
-    printf("Content %d\n", lenght);
   }
   while ((line = my_readline(sockfd))) {
     my_putstr(line, 1);
+    length -= my_strlen(line) + 1;
     free(line);
+    if (length <= 0) {
+      break;
+    }
   }
-  free(line);
 }
 
 char *get_header_value(http_response *http_res, char *header) {
   char *value = NULL;
 
-  for (int i = 0; i < http_res->len; i++) {
+  for (int i = 0; i <= http_res->len; i++) {
     if (!(my_strcmp(http_res->headers[i], header))) {
       value = my_strdup(http_res->values[i]);
     }
@@ -38,7 +40,7 @@ char *get_header_value(http_response *http_res, char *header) {
 
 http_response *get_http_response(int sockfd) {
   char *line = NULL;
-  http_response *http_res;
+  http_response *http_res = NULL;
   http_buffer *http_buf = NULL;
   
 
@@ -53,8 +55,9 @@ http_response *get_http_response(int sockfd) {
     nbr_lines++;
   }
   free(line);
-
+  
   http_res = struct_http_response(http_buf, nbr_lines);
+  print_http_buffer(http_buf);  
   destroy_http_buffer(&http_buf);
   return http_res;
 }
