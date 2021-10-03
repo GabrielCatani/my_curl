@@ -9,8 +9,8 @@ int main(void)
   struct sockaddr_in *socket_info = NULL;
   http_response *http_res = NULL;
   int sockfd = 0;
-  char *http_header = "GET / HTTP/1.1\r\nHost: www.example.com\r\n\r\n";
-  socket_info = set_socket(get_host_info("www.example.com"));
+  char *http_header = "GET / HTTP/1.1\r\nHost: www.google.com\r\n\r\n";
+  socket_info = set_socket(get_host_info("www.google.com"));
 
   sockfd = open_connection(socket_info);
   if (sockfd > 2)

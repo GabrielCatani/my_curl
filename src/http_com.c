@@ -6,7 +6,7 @@ void request(int sockfd, char *http_header) {
   write(sockfd, http_header, my_strlen(http_header));
 }
 
-void get_response_and_show(int sockfd, http_response *http_res) {
+void content_length_format(int sockfd, http_response *http_res) {
   char *line = NULL;
   char *body_lenght = NULL;
   body_lenght = get_header_value(http_res, "Content-Length");
@@ -23,6 +23,55 @@ void get_response_and_show(int sockfd, http_response *http_res) {
     if (length <= 0) {
       break;
     }
+  }
+}
+
+void transfer_encoding_format(int sockfd, http_response *http_res) {
+  char *line = NULL;
+  char *chunk_info = NULL;
+  char *tmp = NULL;
+  int chunk_len = 0;
+  int line_len = 0;
+  printf("%s\n", http_res->values[0]);
+  tmp = my_readline(sockfd);
+  chunk_info = my_strtok(tmp, '\r');
+  free(tmp);
+  
+  if (chunk_info) {
+    chunk_len = hex_to_dec(chunk_info);
+    free(chunk_info);
+  }
+  
+  while ((line = my_readline(sockfd))) {
+    line_len = my_strlen(line);
+    my_putstr(line, 1);
+    chunk_len -= line_len + 1;
+    printf("%d\n", chunk_len);    
+    if (line[line_len + 1] == '\r' ||
+	!chunk_len) {
+      tmp = my_readline(sockfd);
+      chunk_info = my_strtok(tmp,'\r');
+      free(tmp);
+      if (!chunk_info) {
+        break;
+      }
+      else {
+       chunk_len = hex_to_dec(chunk_info);
+       free(chunk_info);
+      }
+    }
+  }
+}
+
+
+void get_response_and_show(int sockfd, http_response *http_res) {
+  char *data_length_control = get_header_value(http_res, "Transfer-Encoding");
+
+  if (data_length_control) {
+    transfer_encoding_format(sockfd, http_res);
+  }
+  else {
+    content_length_format(sockfd, http_res);
   }
 }
 

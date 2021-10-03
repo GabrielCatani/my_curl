@@ -269,3 +269,56 @@ char *my_strtok(char *str, char delim)
   }
   return (ptr);
 }
+
+int power_of(int base, int power) {
+  if (power == 0) {
+    return 1;
+  }
+  else if (power == 1) {
+    return base;
+  }
+
+  int result = base;
+  while (power-- > 1) {
+    result *= base;
+  }
+
+  return result;
+}
+
+int ascii_to_nbr(char c) {
+  if (c >= '0' && c <= '9') {
+    return c - 48; 
+  }
+  return -1;
+}
+
+int hex_letter_value(char hex_digit) {
+  char hex_table[] = {'a', 'b', 'c','d','e','f'};
+  int index = 0;
+  
+  while (index++ < 6) {
+    if (hex_table[index] == hex_digit) {
+      return (10 + index);
+    }
+  }
+  return -1;
+}
+
+int hex_to_dec(char *chunk_info) {
+  int dec = 0;
+  int digits = my_strlen(chunk_info) - 1;
+  int power = digits;
+  int index = 0;
+  while (index <= digits) {
+    if (chunk_info[index] > '9') {
+      dec += (hex_letter_value(chunk_info[index]) * power_of(16, power));
+    }
+    else {
+      dec += (ascii_to_nbr(chunk_info[index]) * power_of(16, power));
+    }
+    index++;
+    power--;
+  }
+  return dec;
+}

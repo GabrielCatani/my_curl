@@ -24,4 +24,8 @@ int my_atoi(char *str);
 int my_tolower(int c);
 char *my_strncpy(char *dst, char *src, int n);
 char *my_strtok(char *str, char delim);
+int hex_letter_value(char hex_digit);
+int hex_to_dec(char *chunk_info);
+int power_of(int base, int power);
+int ascii_to_nbr(char c);
 #endif
