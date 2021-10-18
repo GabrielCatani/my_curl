@@ -67,10 +67,10 @@ void transfer_encoding_format(int sockfd, http_response *http_res) {
   line = my_readline(sockfd);
   chunk_size = get_chunk_size(line);
   free(line);
-  while (chunk_size > 0) {  
+  while (chunk_size >= 0) {
     read_and_print_chunk(sockfd, chunk_size);
     line = my_readline(sockfd);
-    chunk_size = get_chunk_size(line);
+    chunk_size = get_chunk_size(line) - 1;
     free(line);
   }
 }

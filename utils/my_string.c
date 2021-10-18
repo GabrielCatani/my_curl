@@ -323,3 +323,18 @@ int hex_to_dec(char *chunk_info) {
   }
   return dec;
 }
+
+int is_in_string(char *str, char c) {
+  int pos = 0;
+
+  if (!str) {
+    return -1;
+  }
+  while (str[pos] != '\0') {
+    if (str[pos] == c) {
+      return pos;
+    }
+    pos++;
+  }
+  return -1;
+}

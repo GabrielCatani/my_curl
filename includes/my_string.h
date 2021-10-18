@@ -2,6 +2,7 @@
 #define __MY_STRING_H__
 #include <stdlib.h>
 #include <unistd.h>
+int is_in_string(char *str, char c);
 void my_memset(char *dst, char value, int len);
 void my_putstr(char *str, int new_line);
 int my_strlen(char *str);

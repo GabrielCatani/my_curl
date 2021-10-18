@@ -1,9 +1,17 @@
 #include "simple_parser.h"
 
-char *parse_usr_url(char *usr_input) {
-  char *host = NULL;
-  char *resource = NULL;
-  char *request = NULL;
+void initialize_host_info(struct host_info **h_info) {
+  (*h_info) = (struct host_info *)malloc(sizeof(struct host_info));
+  if ((*h_info)) {
+    (*h_info)->host = NULL;
+    (*h_info)->resource = NULL;
+    (*h_info)->request = NULL;
+  }
+}
+
+struct host_info *parse_usr_url(char *usr_input) {
+  struct host_info *h_info = NULL;
+  initialize_host_info(&h_info);
   
   if (!my_strncmp("http://", usr_input, 7)) {
     usr_input += 7;
@@ -12,28 +20,35 @@ char *parse_usr_url(char *usr_input) {
   while (usr_input[index] != '/' && usr_input[index] != '\0') {
     index++;
   }
-  host = my_strsub(usr_input, 0, index);
+  h_info->host = my_strsub(usr_input, 0, index);
+  if (is_in_string(h_info->host, '.') == -1) {
+    free(h_info->host);
+    h_info->host = NULL;
+  }
   if (!usr_input[index]) {
-    resource = my_strsub("/", 0, 1);
+   h_info->resource = my_strsub("/", 0, 1);
   }
   else {
     int len = index + 1;
     while (usr_input[len] != '/' && usr_input[len] != '\0') {
       len++;
     }
-    resource = my_strsub(usr_input, index, len);
+    h_info->resource = my_strsub(usr_input, index, len);
   }
 
-  request = form_request(host, resource);
-  free(host);
-  free(resource);
-  return request;
+  h_info->request = form_request(h_info->host, h_info->resource);
+
+  return h_info;
 }
 
 char *form_request(char *host, char *resource) {
   char *request = NULL;
   char *tmp = NULL;
 
+  if (!host || ! resource) {
+    my_putstr("Invalid URL format", 1);
+    return request;
+  }
   request = my_strjoin("GET ", resource);
   tmp = request;
   request = my_strjoin(tmp, " HTTP/1.1\r\n");
@@ -49,4 +64,11 @@ char *form_request(char *host, char *resource) {
   free(tmp);
   
   return request;
+}
+
+void destroy_host_info(struct host_info **h_info) {
+  free((*h_info)->host);
+  free((*h_info)->resource);
+  free((*h_info)->request);
+  free(*h_info);  
 }

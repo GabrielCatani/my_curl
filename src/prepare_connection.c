@@ -5,9 +5,12 @@
 struct hostent *get_host_info(char *domain) {
   struct hostent *host_info;
 
+  if (!domain) {
+    return NULL;
+  }
   //Check if valid domain
   host_info = gethostbyname(domain);
-  if (!host_info) {
+  if (host_info == NULL) {
     host_error(h_errno);
     return NULL;
   }
@@ -19,8 +22,6 @@ struct sockaddr_in *set_socket(struct hostent *host_info) {
   struct sockaddr_in *socket_info = NULL;
   struct in_addr **address_list;
 
-  //Fill socket_info with host_info
-  //TODO: Replace htons for my_htons
   if (host_info) {
     socket_info = (struct sockaddr_in *)malloc(sizeof(struct sockaddr_in));
     address_list = (struct in_addr **) host_info->h_addr_list;
@@ -29,7 +30,7 @@ struct sockaddr_in *set_socket(struct hostent *host_info) {
     socket_info->sin_addr = *address_list[0];
     my_memset(socket_info->sin_zero, 0, sizeof(socket_info->sin_zero));
   }
-  
+
   return socket_info;
 }
 
