@@ -12,6 +12,7 @@ struct hostent *get_host_info(char *domain) {
   host_info = gethostbyname(domain);
   if (host_info == NULL) {
     host_error(h_errno);
+    my_putstr(domain, 1);
     return NULL;
   }
 

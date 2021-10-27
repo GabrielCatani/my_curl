@@ -11,12 +11,14 @@ void content_length_format(int sockfd, http_response *http_res) {
   char *body_lenght = NULL;
   body_lenght = get_header_value(http_res, "Content-Length");
   int length = 0;
-  
+
   if (body_lenght) {
     length = my_atoi(body_lenght);
     free(body_lenght);
   }
-  while ((line = my_readline(sockfd))) {
+  
+  while (length > 0) {
+    line = my_readline(sockfd);
     my_putstr(line, 1);
     length -= my_strlen(line) + 1;
     free(line);
@@ -40,11 +42,11 @@ int get_chunk_size(char *line) {
 void read_and_print_chunk(int sockfd, int chunk_size) {
   int chunk_tracker = 0;
   char *line = NULL;
-  
+
   while (chunk_tracker < chunk_size) {
     line = my_readline(sockfd);
     my_putstr(line, 1);
-    chunk_tracker += my_strlen(line) + 1;
+    chunk_tracker += my_strlen(line);
     free(line);
   }
 }
@@ -53,7 +55,7 @@ void transfer_encoding_format(int sockfd, http_response *http_res) {
   char *line = NULL;
   char *encoding = NULL;
   int chunk_size = 0;
-    
+
   encoding = get_header_value(http_res, "Transfer-Encoding");
   if (encoding) {
     if (my_strncmp(encoding, "chunked",7)) {
@@ -70,7 +72,7 @@ void transfer_encoding_format(int sockfd, http_response *http_res) {
   while (chunk_size >= 0) {
     read_and_print_chunk(sockfd, chunk_size);
     line = my_readline(sockfd);
-    chunk_size = get_chunk_size(line) - 1;
+    chunk_size = get_chunk_size(line);
     free(line);
   }
 }
