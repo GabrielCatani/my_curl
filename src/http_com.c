@@ -39,16 +39,20 @@ int get_chunk_size(char *line) {
   return chunk_len;
 }
 
-void read_and_print_chunk(int sockfd, int chunk_size) {
+int read_and_print_chunk(int sockfd, int chunk_size) {
   int chunk_tracker = 0;
   char *line = NULL;
 
   while (chunk_tracker < chunk_size) {
     line = my_readline(sockfd);
+    if (!my_strcmp(line, "0\r")) {
+      return 1;
+    }
     my_putstr(line, 1);
     chunk_tracker += my_strlen(line);
     free(line);
   }
+  return 0;
 }
 
 void transfer_encoding_format(int sockfd, http_response *http_res) {
@@ -69,8 +73,10 @@ void transfer_encoding_format(int sockfd, http_response *http_res) {
   line = my_readline(sockfd);
   chunk_size = get_chunk_size(line);
   free(line);
-  while (chunk_size >= 0) {
-    read_and_print_chunk(sockfd, chunk_size);
+  while (chunk_size > 0) {
+    if (read_and_print_chunk(sockfd, chunk_size)) {
+      break;
+    }
     line = my_readline(sockfd);
     chunk_size = get_chunk_size(line);
     free(line);
