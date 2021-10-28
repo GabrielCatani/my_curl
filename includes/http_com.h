@@ -24,5 +24,6 @@ char *get_header_value(http_response *http_res, char *header);
 void content_length_format(int sockfd, http_response *http_res);
 int get_chunk_size(char *line);
 int read_and_print_chunk(int sockfd, int chunk_size);
+void print_http_code(http_buffer *head);
 #define BUFFER_SIZE 512
 #endif

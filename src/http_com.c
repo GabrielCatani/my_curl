@@ -127,7 +127,8 @@ http_response *get_http_response(int sockfd) {
   free(line);
   
   http_res = struct_http_response(http_buf, nbr_lines);
-  print_http_buffer(http_buf);  
+  //print_http_buffer(http_buf);
+  print_http_code(http_buf);
   destroy_http_buffer(&http_buf);
   return http_res;
 }
@@ -164,6 +165,14 @@ void print_http_buffer(http_buffer *head) {
       my_putstr(head->value, 1);
       head = head->next;
     }
+  }
+}
+
+void print_http_code(http_buffer *head) {
+
+  if (head) {
+    my_putstr(head->value, 1);
+    head = head->next;
   }
 }
 
