@@ -5,8 +5,7 @@ int main(int argc, char **argv)
 {
   //parsed_url *purl; = purl_initializer();
   if (argc != 2) {
-    my_putstr(argv[0], 0);
-    my_putstr(" :usage [url]", 1);
+    my_putstr("usage: my_curl [url]", 1);
     return 1;
   }
   //purl = parse_url("http:www.google.com");
