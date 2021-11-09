@@ -49,9 +49,10 @@ char *form_request(char *host, char *resource) {
     my_putstr("Invalid URL format", 1);
     return request;
   }
+
   request = my_strjoin("GET ", resource);
   tmp = request;
-  request = my_strjoin(tmp, " HTTP/1.1\r\n");
+  request = my_strjoin(tmp, "/ HTTP/1.1\r\n");
   free(tmp);
   tmp = request;
   request = my_strjoin(tmp, "Host: ");

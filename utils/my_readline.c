@@ -5,7 +5,7 @@
 #include <unistd.h>
 #include <stdio.h>
 #include "my_string.h"
-#define READLINE_READ_SIZE 7
+#define READLINE_READ_SIZE 1
 
 void read_and_save(int fd, char **line) {
     int rd = 0;
