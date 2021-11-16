@@ -1,86 +1,157 @@
-#include <fcntl.h>
-#include <stdlib.h>
-#include <sys/types.h>
-#include <sys/uio.h>
 #include <unistd.h>
-#include <stdio.h>
+#include <stdlib.h>
+#include <sys/uio.h>
+#include <sys/types.h>
+#include <fcntl.h>
+#define READLINE_READ_SIZE 15
 #include "my_string.h"
-#define READLINE_READ_SIZE 1
 
-void read_and_save(int fd, char **line) {
-    int rd = 0;
-    char buf[READLINE_READ_SIZE + 1];
-    char *tmp = NULL;
+typedef struct circularIndexes circularIndexes;
+struct circularIndexes {
+  int readIndex;
+  int writeIndex;
+  int used;
+  int size;
+};
 
-    while ((rd = read(fd, buf, READLINE_READ_SIZE)))
-    {
-        if (rd == -1)
-            break;
-        buf[rd] = '\0';
-        if (*line)
-        {
-            tmp = my_strjoin(*line, buf);
-            free(*line);
-            *line = tmp;
-        }
-        else
-            *line = my_strdup(buf);
+char *my_strndup(char *str, int len)
+{
+  char *cpy_str = NULL;
+  int index = 0;
 
-        if (my_strchr(*line, '\n'))
-            break;
-    }
+  cpy_str = (char *)malloc((my_strlen(str) + 1) * sizeof(char));
+  if (!cpy_str || !str)
+    return NULL;
+
+  while (str[index] != '\0' && index < len)
+  {
+    cpy_str[index] = str[index];
+    index++;
+  }
+
+  cpy_str[index] = '\0';
+
+  return cpy_str;
 }
 
-char *output_line(char **line, int len) {
-    char *result = NULL;
-    char *tmp = NULL;
-
-    if ((*line)[len] == '\n')
-    {
-        result = my_strsub((*line), 0, len);
-        tmp = my_strdup(&(*line)[len + 1]);
-        free(*line);
-        *line = tmp;
-        if ((*(*line)) == '\0')
-          my_strclr(line);
+void writeValue(char *circularBuffer, char *line_chunk, struct circularIndexes *c_indexes) {
+  int index = 0;
+  while(line_chunk[index] != '\0' && index < c_indexes->size) {
+    circularBuffer[c_indexes->writeIndex] = line_chunk[index];
+    c_indexes->writeIndex++;
+    c_indexes->used++;
+    index++;
+    if (c_indexes->writeIndex == c_indexes->size) {
+      c_indexes->writeIndex = 0;
     }
-    else
-    {
-        result = my_strdup(*line);
-        my_strclr(line);
-    }
-
-    return result;
+  }
 }
 
-int line_len(char **line) {
-    int len = 0;
+char *readValue(char *circularBuffer, struct circularIndexes *c_indexes) {
+  char *str = NULL;
+  int index = 0;
 
-    if (*line)
-    {
-      while ((*line)[len] != '\n' && (*line)[len] != '\0')
-        len++;
+  str = (char *)malloc(sizeof(char) * (c_indexes->used + 1));
+  if (!str) {
+    return NULL;
+  }
+  while(c_indexes->used > 0) {
+    str[index] = circularBuffer[c_indexes->readIndex];
+    c_indexes->readIndex++;
+    c_indexes->used--;
+    index++;
+    if (c_indexes->readIndex == c_indexes->size) {
+      c_indexes->readIndex = 0;
     }
-    else
-      return -1;
+  }
+  str[index] = '\0';
+  
+  return str;
+}
 
-    return len;
+void   circular_controls_init(char *buffer, struct circularIndexes *c_indexes) {
+
+  if (my_strlen(buffer) == 0) {
+    c_indexes->readIndex = 0;
+    c_indexes->writeIndex = 0;
+    c_indexes->used = 0;
+    c_indexes->size = READLINE_READ_SIZE;
+  }
+}
+
+//TODO
+void append_to_line(char **line, char *str, int len) {
+  char *tmp = NULL;
+  char *str_chunk = my_strndup(str, len);
+  
+  if (*line) {
+    tmp = (*line);
+    (*line) = my_strjoin(tmp, str_chunk);
+    free(tmp);
+  }
+  else {
+    (*line) = my_strdup(str_chunk);
+  }
+  free(str_chunk);
+}
+
+void prepend_to_line(char **line, char *str, int len) {
+  char *tmp = NULL;
+  char *str_chunk = my_strndup(str, len);
+  
+  if (*line) {
+    tmp = (*line);
+    (*line) = my_strjoin(str_chunk, tmp);
+    free(tmp);
+  }
+  else {
+    (*line) = my_strdup(str_chunk);
+  }
+  free(str_chunk);
 }
 
 char *my_readline(int fd) {
-    static char *line[4096];
-    int len = 0;
-    char *result = NULL; 
+  char *line = NULL;
+  static char circularBuffer[READLINE_READ_SIZE] = "";
+  char read_buffer[READLINE_READ_SIZE + 1];
+  int line_len = 0;
+  static circularIndexes c_indexes;
+  char *new_line_pos = NULL;
+  char *read_circ = NULL;
 
-	if (fd < 0)
-	 return NULL;
-    
-    read_and_save(fd, line);
+  if (fd == -1) {
+    return line;
+  }  
+  circular_controls_init(circularBuffer, &c_indexes);
 
-    if ((len = line_len(line)) < 0)
-     return NULL;
+  //handle rest
+  if (c_indexes.used > 0) {
+    read_circ = readValue(circularBuffer, &c_indexes);
+    if ((new_line_pos = my_strchr(read_circ, '\n'))) {
+      line = my_strndup(read_circ, (new_line_pos - read_circ));
+      writeValue(circularBuffer, new_line_pos + 1, &c_indexes);
+      free(read_circ);
+      return line; 
+    }
+    line = my_strdup(read_circ);
+    free(read_circ);
+  }
 
-    result = output_line(line, len);
+  while ((line_len = read(fd, read_buffer, READLINE_READ_SIZE))) {
+    if (line_len == -1) {
+      return NULL;
+    }
+    read_buffer[line_len] = '\0';
 
-    return result;
+    if ((new_line_pos = my_strchr(read_buffer, '\n'))) {
+      append_to_line(&line, read_buffer, (new_line_pos - read_buffer));
+      writeValue(circularBuffer, new_line_pos + 1, &c_indexes);
+      break;
+    }
+    else {
+      append_to_line(&line, read_buffer, my_strlen(read_buffer));
+    }
+  }
+
+  return line;
 }

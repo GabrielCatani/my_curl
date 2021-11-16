@@ -46,6 +46,7 @@ int read_and_print_chunk(int sockfd, int chunk_size) {
   while (chunk_tracker < chunk_size) {
     line = my_readline(sockfd);
     if (!my_strcmp(line, "0\r")) {
+      free(line);
       return 1;
     }
     my_putstr(line, 1);
