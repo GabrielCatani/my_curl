@@ -3,8 +3,10 @@
 #include <sys/uio.h>
 #include <sys/types.h>
 #include <fcntl.h>
-#define READLINE_READ_SIZE 15
+#define READLINE_READ_SIZE 1
 #include "my_string.h"
+
+#include <stdio.h>
 
 typedef struct circularIndexes circularIndexes;
 struct circularIndexes {
@@ -71,7 +73,7 @@ char *readValue(char *circularBuffer, struct circularIndexes *c_indexes) {
 
 void   circular_controls_init(char *buffer, struct circularIndexes *c_indexes) {
 
-  if (my_strlen(buffer) == 0) {
+  if (!buffer) {
     c_indexes->readIndex = 0;
     c_indexes->writeIndex = 0;
     c_indexes->used = 0;
@@ -112,7 +114,7 @@ void prepend_to_line(char **line, char *str, int len) {
 
 char *my_readline(int fd) {
   char *line = NULL;
-  static char circularBuffer[READLINE_READ_SIZE] = "";
+  static char circularBuffer[READLINE_READ_SIZE];
   char read_buffer[READLINE_READ_SIZE + 1];
   int line_len = 0;
   static circularIndexes c_indexes;

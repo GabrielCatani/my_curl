@@ -1,7 +1,7 @@
 #include "my_string.h"
 #include <stdio.h>
 
-void my_memset(char *dst, char value, int len)
+void my_memset(unsigned char *dst, char value, int len)
 {
   for (int i = 0; i < len; i++)
   {
@@ -11,7 +11,6 @@ void my_memset(char *dst, char value, int len)
 
 int my_strlen(char *str)
 {
-
   int len = 0;
   if (str)
   {
