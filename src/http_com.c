@@ -46,6 +46,7 @@ int read_and_print_chunk(int sockfd, int chunk_size) {
   while (chunk_tracker < chunk_size) {
     line = my_readline(sockfd);
     if (!my_strcmp(line, "0\r")) {
+      free(line);
       return 1;
     }
     my_putstr(line, 1);
@@ -108,11 +109,11 @@ char *get_header_value(http_response *http_res, char *header) {
   return value;
 } 
 
+//TODO: reading line by line not breaking
 http_response *get_http_response(int sockfd) {
   char *line = NULL;
   http_response *http_res = NULL;
   http_buffer *http_buf = NULL;
-  
 
   int nbr_lines = 0;
   while ((line = my_readline(sockfd))) {
@@ -178,12 +179,13 @@ void print_http_code(http_buffer *head) {
 
 http_response *struct_http_response(http_buffer *http_buf, int nbr_lines) {
   http_response *http_res = NULL;
-
+  
   http_res = (http_response *)malloc(sizeof(http_response));
   if (!http_buf || !http_res) {
     return NULL;
   }
   
+  http_res->len = 0;
   http_res->headers = (char **)malloc(sizeof(char *) * nbr_lines);
   http_res->values = (char **)malloc(sizeof(char *) * nbr_lines);
  

@@ -11,7 +11,6 @@ void my_memset(unsigned char *dst, char value, int len)
 
 int my_strlen(char *str)
 {
-
   int len = 0;
   if (str)
   {
